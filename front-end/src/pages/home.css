@@ -1,0 +1,15 @@
+.animation{
+    animation-name: anim;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+    animation-timing-function: linear;
+}
+
+@keyframes anim {
+    0%{
+        border:none;
+    }
+    100%{
+        border:solid 10px rgb(255, 140, 0);
+    }   
+}
