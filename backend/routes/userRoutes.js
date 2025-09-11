@@ -1,7 +1,10 @@
-let express = require("express");
-const { signup } = require("../controllers/userController");
-let UserRouter = express.Router();
+const express = require("express");
+const { signup, signin, getcartdata } = require("../controllers/userController");
 
-UserRouter.post("/signup",signup);
+const UserRouter = express.Router();
 
-module.exports={UserRouter};
+UserRouter.post("/signup", signup);
+UserRouter.post("/signin", signin);
+UserRouter.get("/getcartdata", getcartdata);
+
+module.exports = { UserRouter };
