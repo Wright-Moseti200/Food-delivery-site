@@ -1,43 +1,39 @@
-let {Users} = require("../models/userModels");
 let express = require("express");
-let app = express();
-let {v4:uuidv4} = require("uuid");
-let jwt = require("jsonwebtoken");
-let bcrypt = require("bcrypt");
 require("dotenv").config();
-
-let signup =async(req,res)=> {
+let bcrypt = require("bcrypt");
+let jwt =  require("jsonwebtoken");
+let {Users} = require("../models/userModels");
+//Signup
+let signUp = async (req,res)=>{
     try{
-    let email = await Users.findOne({email:req.body.email})
-    if(email){
-     return res.status(400).json({
+    let user = await Users.findOne({email:req.body.email});
+    if(user){
+     return  res.status(400).json({
             success:false,
-            message:"user already exists"
+            message:"User already exist"
         });
     }
+    let hashedPassword = await bcrypt.hash(req.body.password,parseInt(process.env.HASH_PAS));
 
-    let password = bcrypt.hash(req.body.password,process.env.HASH_PASS);
-
-   let newUsers = await new Users({
-        _id:uuidv4(),
+    let userData = new Users({
         username:req.body.username,
         email:req.body.email,
-        password:password
+        password:hashedPassword
     });
 
-    let savedUser = newUsers.save();
+    let savedUser = await userData.save();
 
-    let data = {
-        user:{
-            id:savedUser._id
-        }
-    }
+    let data = {user:{
+        id:savedUser._id
+    }}
 
-    let token = jwt.sign(data,process.env.JWT_PASS);
-   return res.status(200).json({
-        message:"User Signed up successfully",
+    let token = jwt.sign(data,process.env.JWT_PAS);
+
+   return res.status(201).json({
+        success:true,
         token:token
     });
+
 }
 catch(error){
 return res.status(400).json({
@@ -45,14 +41,46 @@ return res.status(400).json({
     message:error.message
 })
 }
-};
-
-app.post("/signin",async (req,res)=>{
-
+}
+//Sign in
+let signIn = async (req,res)=>{
+    try{
+let email = await Users.findOne({email:req.body.email});
+if(!email){
+return res.status(404).json({
+    success:false,
+    message:"User does not exist"
 });
+}
+let password = await bcrypt.compare(req.body.password,email.password);
+if(!password){
+   return res.status(401).json(
+        {
+            success:false,
+            message:"Password is incorrect"
+        }
+    );
+}
+let data = {user:{
+    id:email._id
+}};
 
-app.get("/getcartdata",(req,res)=>{
+let token=jwt.sign(data,process.env.JWT_PAS);
 
+return res.status(200).json({
+    success:true,
+    token:token
 });
+    }
+    catch(error){
+        res.status(400).json({
 
-module.exports={signup};
+        });
+    }
+}
+
+let getCartData = (req,res)=>{
+
+}
+
+module.exports = {signUp,signIn,getCartData};
