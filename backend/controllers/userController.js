@@ -3,9 +3,11 @@ require("dotenv").config();
 let bcrypt = require("bcrypt");
 let jwt =  require("jsonwebtoken");
 let {Users} = require("../models/userModels");
+
 //Signup
 let signUp = async (req,res)=>{
     try{
+
     let user = await Users.findOne({email:req.body.email});
     if(user){
      return  res.status(400).json({
@@ -14,11 +16,16 @@ let signUp = async (req,res)=>{
         });
     }
     let hashedPassword = await bcrypt.hash(req.body.password,parseInt(process.env.HASH_PAS));
+    let cart = {};
+    for(let i=1;i<=300+1;i++){
+        cart[i]=0;
+    }
 
     let userData = new Users({
         username:req.body.username,
         email:req.body.email,
-        password:hashedPassword
+        password:hashedPassword,
+        cartData:cart
     });
 
     let savedUser = await userData.save();
@@ -36,13 +43,14 @@ let signUp = async (req,res)=>{
 
 }
 catch(error){
-return res.status(400).json({
+return res.status(500).json({
     success:false,
     message:error.message
 })
 }
 }
-//Sign in
+
+//Signin
 let signIn = async (req,res)=>{
     try{
 let email = await Users.findOne({email:req.body.email});
@@ -73,14 +81,64 @@ return res.status(200).json({
 });
     }
     catch(error){
-        res.status(400).json({
-
-        });
+        res.status(500).json({
+            success:false,
+    message:error.message
+});
     }
 }
 
-let getCartData = (req,res)=>{
-
+//getcartdata
+let getCartData =async (req,res)=>{
+    try{
+        let user = await Users.findOne({_id:req.user.id});
+        res.status(200).json({
+            success:true,
+            cart:user.cartData
+        });
+    }
+    catch(error){
+         res.status(500).json({
+            success:false,
+    message:error.message
+});
+    }
 }
 
-module.exports = {signUp,signIn,getCartData};
+let addToCart = async (req,res)=>{
+    try{
+     let userData = await Users.findOne({_id:req.user.id});
+     userData.cartData[req.params.id]=userData.cartData[req.params.id]+1;
+     await Users.findOneAndUpdate({_id:req.user.id},{cartData:userData.cartData}); 
+     res.status(200).json({
+        success:true,
+        message:"Cart Updated"
+     });
+    }
+    catch(error){
+      return   res.status(500).json({
+            success:false,
+    message:error.message,
+});
+    }
+}
+
+let removeFromCart = async (req,res)=>{
+try{
+      let userData = await Users.findOne({_id:req.user.id});
+     userData.cartData[req.params.id]=userData.cartData[req.params.id]-1;
+     await Users.findOneAndUpdate({_id:req.user.id},{cartData:userData.cartData}); 
+     res.status(200).json({
+        success:true,
+        message:"Cart Updated"
+     });
+}
+catch(error){
+   return res.status(500).json({
+            success:false,
+    message:error.message
+});
+}
+}
+
+module.exports = {signUp,signIn,getCartData,addToCart,removeFromCart};

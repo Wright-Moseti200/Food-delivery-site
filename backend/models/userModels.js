@@ -15,6 +15,10 @@ password:{
     type:String,
     required:true
 },
+cartData:{
+    type:Object,
+    required:true
+}
 });
 
 let Users = mongoose.model("User",userSchema);
