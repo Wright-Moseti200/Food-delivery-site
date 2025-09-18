@@ -10,13 +10,13 @@ const ListProduct = () => {
       setproducts(data.products);
     }
     catch(error){
-      alert(error.message);
+      console.log(error.message);
     }
   }
 
   useEffect(()=>{
     apiCall();
-  })
+  },[products])
 
   return (
     <div className='flex w-full justify-center items-start py-4 sm:py-8'>
