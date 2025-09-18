@@ -1,17 +1,22 @@
-let multer = require("multer");
-let express = require("express");
-let path = require("path");
-let app = express();
-let storage = multer.diskStorage({
-    destination:function(req,file,cb){
-        cb(null,"./folder/images");   
-    },
-    filename:function(req,file,cb){
-        cb(null,file.originalname);
-    }
+const multer = require("multer");
+const path = require("path");
+let cloudinary =  require("cloudinary").v2;
+let {CloudinaryStorage} = require("multer-storage-cloudinary");
+
+cloudinary.config({
+    cloud_name:"dvexzhis9",
+    api_key:357754644141572,
+    api_secret:"W8QHODGRKexhcSpUXCfaHD6aVh4"
 });
 
-let upload = multer({storage:storage});
-app.use("/images",express.static("./folder/images"));
+let storage = new CloudinaryStorage({
+    cloudinary:cloudinary,
+    params:{
+        folder:"Food delivery Site",
+        allowed_formats:['jpg', 'jpeg', 'png', 'gif']
+    }
+})
 
-module.exports={upload};
+const upload = multer({ storage: storage });
+
+module.exports = { upload };

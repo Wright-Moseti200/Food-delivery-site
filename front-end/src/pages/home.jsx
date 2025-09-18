@@ -7,32 +7,46 @@ import "./home.css";
 
 const Home = () => {
   let [menuItem,selectMenuitem]=useState("");
-  let [foodList,setFoodList]=useState(food_list);
+  let [data,setData]=useState([]);
+  let [foodList,setfoodlist]=useState([]);
   let {addToCart,removeFromCart,cart}=useContext(FoodContext);
  
-  let menuSelect = (e,index)=>{
+  let menuSelect = async (e,index)=>{
     // Remove animation from all menu items first
     const allMenuImages = document.querySelectorAll('.menu-item');
     allMenuImages.forEach(img => img.classList.remove('animation'));
     
     // Convert e.target.alt to number for comparison, or use string comparison
-    if(parseInt(e.target.alt) === index){
+   if(parseInt(e.target.alt) === index){
       e.target.classList.add("animation");
       selectMenuitem(menu_list[index].menu_name);
-      console.log(menuItem)
     }
   }
-  
+
+  let apiCall =async()=>{
+    try{
+      let response = await fetch("http://localhost:3000/api/product/sendProductData");
+      let data = await response.json();
+      setData(data.products);
+    }
+    catch(error){
+      alert(error.message);
+    }
+  }
+
   useEffect(()=>{
+    apiCall();
     if(menuItem) {
-      let updated=food_list.filter((element,index)=>{
+      let updated=data.filter((element,index)=>{
         return ( element.category===menuItem);
       });
-      setFoodList(updated);
-    } else {
-      setFoodList(food_list);
+      setfoodlist(updated);
+    } 
+    else{
+      setfoodlist(data);
     }
-  },[menuItem]);
+  }
+  ,[menuItem]);
 
   return (
     <>
@@ -109,12 +123,12 @@ const Home = () => {
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-7'> 
           {foodList.map((element,index) => (
             <div
-              key={element._id || index}
+              key={ index}
               className='bg-white shadow-lg rounded-md overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow'
             >
               <div
                 className='h-48 sm:h-52 lg:h-60 bg-cover bg-center flex items-end justify-end p-3'
-                style={{ backgroundImage: `url(${element.image})`, backgroundPosition: 'center' }}
+                style={{ backgroundImage: `url(${element.image_url})`, backgroundPosition: 'center' }}
               >
                 {cart[element._id]>0?
                 <div className='flex justify-center items-center bg-white rounded-3xl shadow-md'>

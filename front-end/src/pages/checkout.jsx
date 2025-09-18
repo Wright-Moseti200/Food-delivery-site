@@ -1,9 +1,32 @@
+/* eslint-disable no-unused-vars */
 import React, {useContext} from 'react'
-import {FoodContext} from "../context/context";
-
+import {FoodContext} from "../context/context"
+import {loadStripe} from "@stripe/stripe-js"
 const Checkout = () => {
+  let stripe_key = import.meta.env.STRIPE_PUBLIC_KEY ;
   let {getTotalCartAmount} = useContext(FoodContext);
-  
+  const makePayment =async()=>{
+    const stripe = await loadStripe(stripe_key);
+    const body = {
+    }
+    const header = {
+      "Content-Type":"application/json"
+    }
+    const response = await fetch(`http://localhost:3000/create-checkout-session`,{
+      method:"POST",
+      headers:header,
+      body:JSON.stringify(body)
+    });
+
+    const session =await response.json();
+    const result = stripe.redirectToCheckout({
+      sessionId:session.id
+    });
+
+    if(result.error){
+      console.log(result.error);
+    }
+  }
   return (
     <div className='flex w-full justify-center items-start py-4 sm:py-8'>
       <div className='flex flex-col lg:flex-row mt-8 lg:mt-14 w-full max-w-7xl justify-center lg:justify-around gap-8 lg:gap-40 px-4 sm:px-6 lg:px-8'>
@@ -106,7 +129,7 @@ const Checkout = () => {
             <p>${getTotalCartAmount() + 5}</p>
           </div>
           
-          <button className='bg-orange-500 hover:bg-orange-600 active:bg-orange-700 transition-colors duration-200 py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-white font-semibold mt-4 sm:mt-6 w-full text-sm sm:text-base touch-manipulation'>
+          <button onClick={makePayment()} className='bg-orange-500 hover:bg-orange-600 active:bg-orange-700 transition-colors duration-200 py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-white font-semibold mt-4 sm:mt-6 w-full text-sm sm:text-base touch-manipulation'>
             PLACE ORDER
           </button>
         </div>

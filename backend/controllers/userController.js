@@ -3,6 +3,7 @@ require("dotenv").config();
 let bcrypt = require("bcrypt");
 let jwt =  require("jsonwebtoken");
 let {Users} = require("../models/userModels");
+let stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 //Signup
 let signUp = async (req,res)=>{
@@ -105,6 +106,7 @@ let getCartData =async (req,res)=>{
     }
 }
 
+//add to cart
 let addToCart = async (req,res)=>{
     try{
      let userData = await Users.findOne({_id:req.user.id});
@@ -123,6 +125,7 @@ let addToCart = async (req,res)=>{
     }
 }
 
+//remove from cart
 let removeFromCart = async (req,res)=>{
 try{
       let userData = await Users.findOne({_id:req.user.id});
@@ -141,4 +144,30 @@ catch(error){
 }
 }
 
-module.exports = {signUp,signIn,getCartData,addToCart,removeFromCart};
+//Payment intergration
+let payment = async(req,res)=>{
+    const {products} = req.body;
+    const  lineitems = products.map((element)=>({
+        price_data:{
+            currency:"usd",
+            product_data:{
+                name:element.name,
+                images:[element.image]
+            },
+            unit_amount:Math.round(element.price * 100)
+        },
+        quantity:element.quantity
+    }));
+
+    const session  = await stripe.checkout.session.create({
+        payment_method_types:["card"],
+        line_items:lineitems,
+        mode:"payment",
+        success_url:"",
+        cancel_url:""
+    });
+
+    res.status(200).json({id:session.id});
+}
+
+module.exports = {signUp,signIn,getCartData,addToCart,removeFromCart,payment};

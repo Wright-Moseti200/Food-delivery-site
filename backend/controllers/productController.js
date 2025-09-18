@@ -11,7 +11,7 @@ let uploadImage = (req,res)=>{
         }
  return res.status(200).json({
     success:true,
-    image_url:`/images/${req.file.filename}`
+    image_url:req.file.path
 });
 }
 catch(error){
@@ -24,18 +24,18 @@ catch(error){
 
 let receiveProductData =async (req,res)=>{
     try{
-        let id;
-        let product = Product.findOne({});
+        let pid;
+        let product = await Product.find({});
         if(product.length > 0){
             let last_Product_array = product.slice(-1);
             let last_Product = last_Product_array[0];
-            id=last_Product.id+1
+            pid=last_Product.id+1
         }
         else{
-            id = 1
+            pid = 1
         }
         let productData = new Product({
-            id:id,
+            id:pid,
             name:req.body.name,
             image_url:req.body.image_url,
             price:req.body.price,
@@ -67,10 +67,9 @@ let receiveProductData =async (req,res)=>{
 
 let sendProductData = async (req,res)=>{
     try{
-        let products = await Product.findOne({});
+        let products = await Product.find({});
        return res.status(200).json({
-        success:true,
-        products:products
+        products
        });
     }
     catch(error){

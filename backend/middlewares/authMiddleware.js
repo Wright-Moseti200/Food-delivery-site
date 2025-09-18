@@ -2,7 +2,7 @@ let jwt = require("jsonwebtoken");
 require("dotenv").config();
 let authMiddleware = (req,res,next)=>{
     try{
-    let token = req.headers("auth-token");
+    let token = req.header("auth-token");
     if(!token){
         res.status(404).json({
             success:false,

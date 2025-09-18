@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { assets } from '../assets/assets.js'
 import { Link } from 'react-router-dom'
 
@@ -6,11 +6,126 @@ const Navbar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   
   const toggleModal = () => setIsModalOpen(v => !v)
   const switchToSignUp = () => setIsSignUp(true)
   const switchToSignIn = () => setIsSignUp(false)
   const toggleMobileMenu = () => setIsMobileMenuOpen(v => !v)
+
+  // Check login status on component mount
+  useEffect(() => {
+    const token = localStorage.getItem("auth-token")
+    setIsLoggedIn(!!token)
+  }, [])
+
+  let [formData,setFormData]=useState({
+    username:"",
+    email:"",
+    password:""
+  });
+
+  // Form validation
+  const validateForm = () => {
+    if (!formData.email || !formData.password) {
+      alert('Email and password are required');
+      return false;
+    }
+    if (isSignUp && !formData.username) {
+      alert('Username is required for sign up');
+      return false;
+    }
+    return true;
+  }
+
+  let signUp = async () => {
+    if (!validateForm()) return;
+    
+    setIsLoading(true);
+    try {
+      const response = await fetch("http://localhost:3000/api/users/signUp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        alert('Account created successfully!');
+        setFormData({ username: "", email: "", password: "" });
+        setIsModalOpen(false);
+      } else {
+        alert(data.message || 'Sign up failed');
+      }
+    } catch (error) {
+      alert('Network error: ' + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  let signIn = async () => {
+    if (!validateForm()) return;
+    
+    setIsLoading(true);
+    try {
+      const response = await fetch("http://localhost:3000/api/users/signIn", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        localStorage.setItem("auth-token", data.token);
+        setIsLoggedIn(true);
+        alert('Signed in successfully!');
+        setFormData({ username: "", email: "", password: "" });
+        setIsModalOpen(false);
+      } else {
+        alert(data.message || 'Sign in failed');
+      }
+    } catch (error) {
+      alert('Network error: ' + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  let formhandler = (e) => {
+    setFormData((data) => {
+      let setData = {...data};
+      setData[e.target.name] = e.target.value;
+      return setData;
+    });
+  }
+
+  // Handle form submission
+  const handleFormSubmit = (e) => {
+    e.preventDefault(); // Prevent page refresh
+    if (isSignUp) {
+      signUp();
+    } else {
+      signIn();
+    }
+  }
+
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem("auth-token");
+    setIsLoggedIn(false);
+    setIsModalOpen(false);
+  }
 
   return (
     <>
@@ -34,13 +149,25 @@ const Navbar = () => {
             <Link to="/cart">
               <img className='h-6 cursor-pointer' src={assets.basket_icon} alt="cart"/>
             </Link>
-            <button
-              type="button"
-              onClick={toggleModal}
-              className="border-2 border-neutral-400 p-2 pl-5 pr-5 rounded-full hover:bg-gray-50"
-            >
-              Sign in
-            </button>
+            {
+              isLoggedIn ? (
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="border-2 border-neutral-400 p-2 pl-5 pr-5 rounded-full hover:bg-gray-50"
+                >
+                  Logout
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={toggleModal}
+                  className="border-2 border-neutral-400 p-2 pl-5 pr-5 rounded-full hover:bg-gray-50"
+                >
+                  Sign in
+                </button>
+              )
+            }
           </div>
 
           {/* Mobile Actions - Visible on mobile */}
@@ -95,19 +222,31 @@ const Navbar = () => {
               </p>
             </li>
             <li className="pt-2 border-t border-gray-100">
-              <button
-                type="button"
-                onClick={toggleModal}
-                className="w-full text-left border-2 border-neutral-400 p-2 pl-5 pr-5 rounded-full hover:bg-gray-50 text-sm"
-              >
-                Sign in
-              </button>
+              {
+                isLoggedIn ? (
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="w-full text-left border-2 border-neutral-400 p-2 pl-5 pr-5 rounded-full hover:bg-gray-50 text-sm"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={toggleModal}
+                    className="w-full text-left border-2 border-neutral-400 p-2 pl-5 pr-5 rounded-full hover:bg-gray-50 text-sm"
+                  >
+                    Sign in
+                  </button>
+                )
+              }
             </li>
           </ul>
         </div>
       </div>
 
-      {/* Modal - Unchanged */}
+      {/* Modal - Updated */}
       <div
         className={`fixed inset-0 bg-slate-950/50 flex justify-center items-center transition-opacity duration-300 ease-out z-[9999] ${isModalOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
         aria-hidden={!isModalOpen}
@@ -138,14 +277,18 @@ const Navbar = () => {
               {isSignUp ? 'Create your account by entering your details.' : 'Enter your email and password to Sign In.'}
             </p>
 
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleFormSubmit}>
               {isSignUp && (
                 <div className="w-full">
                   <label className="block text-sm font-medium text-slate-700 mb-2">Username</label>
                   <input
                     type="text"
                     placeholder="Enter your username"
+                    name="username"
+                    onChange={formhandler}
+                    value={formData.username}
                     className="block w-full rounded-md border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-600"
+                    required={isSignUp}
                   />
                 </div>
               )}
@@ -155,7 +298,11 @@ const Navbar = () => {
                 <input
                   type="email"
                   placeholder="name@mail.com"
+                  name="email"
+                  onChange={formhandler}
+                  value={formData.email}
                   className="block w-full rounded-md border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-600"
+                  required
                 />
               </div>
 
@@ -164,7 +311,11 @@ const Navbar = () => {
                 <input
                   type="password"
                   placeholder="********"
+                  name='password'
+                  onChange={formhandler}
+                  value={formData.password}
                   className="block w-full rounded-md border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-600"
+                  required
                 />
               </div>
 
@@ -174,17 +325,31 @@ const Navbar = () => {
               </div>
 
               <div>
-                <button type="submit" className="w-full inline-flex items-center justify-center rounded-md py-2 px-3 bg-orange-500 border border-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 shadow-sm">
-                  {isSignUp ? 'Sign Up' : 'Sign In'}
+                <button 
+                  type="submit" 
+                  disabled={isLoading}
+                  className="w-full inline-flex items-center justify-center rounded-md py-2 px-3 bg-orange-500 border border-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Processing...
+                    </>
+                  ) : (
+                    isSignUp ? 'Sign Up' : 'Sign In'
+                  )}
                 </button>
               </div>
             </form>
 
             <p className="mt-4 text-center text-sm text-slate-600">
               {isSignUp ? (
-                <>Already have an account? <button onClick={switchToSignIn} className="text-slate-800 font-medium hover:text-slate-900">Sign in</button></>
+                <>Already have an account? <button type="button" onClick={switchToSignIn} className="text-slate-800 font-medium hover:text-slate-900">Sign in</button></>
               ) : (
-                <>Don't have an account? <button onClick={switchToSignUp} className="text-slate-800 font-medium hover:text-slate-900">Sign up</button></>
+                <>Don't have an account? <button type="button" onClick={switchToSignUp} className="text-slate-800 font-medium hover:text-slate-900">Sign up</button></>
               )}
             </p>
           </div>
