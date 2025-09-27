@@ -61,6 +61,7 @@ const Navbar = () => {
       } else {
         alert(data.message || 'Sign up failed');
       }
+      
     } catch (error) {
       alert('Network error: ' + error.message);
     } finally {
@@ -95,6 +96,7 @@ const Navbar = () => {
       } else {
         alert(data.message || 'Sign in failed');
       }
+      window.location.reload();
     } catch (error) {
       alert('Network error: ' + error.message);
     } finally {
@@ -125,6 +127,7 @@ const Navbar = () => {
     localStorage.removeItem("auth-token");
     setIsLoggedIn(false);
     setIsModalOpen(false);
+    window.location.reload();
   }
 
   return (

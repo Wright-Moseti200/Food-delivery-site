@@ -1,55 +1,64 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable no-unused-vars */
 import React,{useEffect,useState,createContext} from 'react'
-import { food_list } from '../assets/assets'
 
-  let defaultCart = ()=>{
-        let cart={};
-        for(let i=1;i<=food_list.length;i++){
-            cart[i]=0;
-        }
-        return cart
-    } 
+ export const FoodContext = createContext();
 
-    export const FoodContext = createContext();
-
+ let defaultCart = ()=>{
+    let cart = {}
+    for(let i;i<=300+1;i++){
+        cart[i]=0;
+    }
+    return cart;
+ }
+  
 const Context = ({children}) => {
+    let [cart,setDefaultCart]=useState();
 
-    let [cart,setCart]=useState(defaultCart);
-
-    let addToCart = (id)=>{
-        setCart((data)=>{
-            let copyData = {...data};
-            copyData[id]+=1
-            return copyData;
-        });
+    let getcartData = async ()=>{
+         const token = localStorage.getItem("auth-token");
+       await fetch('http://localhost:3000/api/users/getcartdata',{
+        method:"get",
+        headers:{
+            "Content-Type":"application/json",
+            "auth-token":token
+        }})
+       .then((response)=>response.json())
+       .then((data)=>setDefaultCart(data.cart)).catch((error)=>console.log(error.message));
     }
 
-    let removeFromCart = (id)=>{
-        setCart((data)=>{
-            let copyData = {...data};
-            copyData[id]-=1
-            return copyData;
-        });
+    useEffect(()=>{
+        getcartData();
+    },[cart]);
+
+    let addToCart= async(elementId)=>{
+         await fetch('http://localhost:3000/api/users/addtocart',{
+            method:"put",
+            headers:{
+                "Content-Type":"application/json",
+                "auth-token":localStorage.getItem("auth-token")
+            },
+            body:JSON.stringify({id:elementId})
+         })
+       .then((response)=>response.json())
+       .then((data)=>console.log(data.message)).catch((error)=>console.log(error.message));
     }
 
-   let getTotalCartAmount = ()=>{
-    let totalAmount = 0;
-    for(let items in cart){ 
-        if(cart[items] > 0){
-            let product = food_list.find((element) => {
-                return element._id === items;  
-            });
-            if(product){
-                totalAmount += product.price * cart[items];
-            }
-        }
+    let removeFromCart = async(elementId)=>{
+         await fetch('http://localhost:3000/api/users/removefromcart',{
+            method:"put",
+            headers:{
+                "Content-Type":"application/json",
+                "auth-token":localStorage.getItem("auth-token")
+            },
+            body:JSON.stringify({id:elementId})
+         })
+       .then((response)=>response.json())
+       .then((data)=>console.log(data.message)).catch((error)=>console.log(error.message));
     }
-    return totalAmount;
-}
 
 
-    let values = {addToCart,removeFromCart,getTotalCartAmount,cart};
+    let values = {cart,defaultCart,addToCart,removeFromCart};
 
   return(
     <>

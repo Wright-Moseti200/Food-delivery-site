@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React,{useState,useEffect,useContext} from 'react'
-import { assets , menu_list, food_list } from '../assets/assets';
+import { assets , menu_list, } from '../assets/assets';
 import {FoodContext} from "../context/context"
 import "./home.css";
 
@@ -10,6 +10,25 @@ const Home = () => {
   let [data,setData]=useState([]);
   let [foodList,setfoodlist]=useState([]);
   let {addToCart,removeFromCart,cart}=useContext(FoodContext);
+  
+  // Check if user is logged in
+  const isLoggedIn = localStorage.getItem("auth-token");
+  
+  // Function to get the appropriate cart based on login status
+  const getCartToUse = () => {
+    if (isLoggedIn) {
+      return cart || {};
+    } else {
+      // Return empty cart for non-logged in users
+      return {};
+    }
+  };
+  
+  // Get cart count safely
+  const getCartCount = (itemId) => {
+    const currentCart = getCartToUse();
+    return currentCart[itemId] || 0;
+  };
  
   let menuSelect = async (e,index)=>{
     // Remove animation from all menu items first
@@ -30,10 +49,10 @@ const Home = () => {
       setData(data.products);
     }
     catch(error){
-      alert(error.message);
+      console.log(error.message);
     }
   }
-
+  
   useEffect(()=>{
     apiCall();
     if(menuItem) {
@@ -45,7 +64,7 @@ const Home = () => {
     else{
       setfoodlist(data);
     }
-  },[data]);
+  },[data, menuItem]);
 
   return (
     <>
@@ -114,61 +133,71 @@ const Home = () => {
 
       {/* Divider */}
       <div className='border-b-2 border-neutral-300 mt-6 sm:mt-8 lg:mt-10 w-full max-w-7xl'/>
-
+      
       {/* Food Items Section */}
       <div className='mt-6 sm:mt-8 lg:mt-9 w-full max-w-7xl'>
         <h1 className='text-2xl sm:text-3xl font-bold text-center lg:text-left mb-4 sm:mb-5'>Top dishes near you</h1>
-        
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-7'> 
-          {foodList.map((element,index) => (
-            <div
-              key={ index}
-              className='bg-white shadow-lg rounded-md overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow'
-            >
+          {foodList.map((element,index) => {
+            const cartCount = getCartCount(element.id);
+            
+            return (
               <div
-                className='h-48 sm:h-52 lg:h-60 bg-cover bg-center flex items-end justify-end p-3'
-                style={{ backgroundImage: `url(${element.image_url})`, backgroundPosition: 'center' }}
+                key={index}
+                className='bg-white shadow-lg rounded-md overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow'
               >
-                {cart[element._id]>0?
-                <div className='flex justify-center items-center bg-white rounded-3xl shadow-md'>
-                  <img
-                    src={assets.add_icon_green}
-                    alt="add"
-                    className='h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full cursor-pointer p-1 hover:scale-110 transition-transform'
-                    onClick={()=>{addToCart(element._id)}}
-                  />
-                  <p className='px-2 text-sm sm:text-base font-semibold'>{cart[element._id]}</p>
-                  <img
-                    src={assets.remove_icon_red}
-                    alt="remove"
-                    className='h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full cursor-pointer p-1 hover:scale-110 transition-transform'
-                    onClick={()=>{removeFromCart(element._id)}}
-                  />
+                <div
+                  className='h-48 sm:h-52 lg:h-60 bg-cover bg-center flex items-end justify-end p-3'
+                  style={{ backgroundImage: `url(${element.image_url})`, backgroundPosition: 'center' }}
+                >
+                  {cartCount > 0 ? (
+                    <div className='flex justify-center items-center bg-white rounded-3xl shadow-md'>
+                      <img
+                        src={assets.add_icon_green}
+                        alt="add"
+                        className='h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full cursor-pointer p-1 hover:scale-110 transition-transform'
+                        onClick={()=>{addToCart(element.id)}}
+                      />
+                      <p className='px-2 text-sm sm:text-base font-semibold'>{cartCount}</p>
+                      <img
+                        src={assets.remove_icon_red}
+                        alt="remove"
+                        className='h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full cursor-pointer p-1 hover:scale-110 transition-transform'
+                        onClick={()=>{removeFromCart(element.id)}}
+                      />
+                    </div>
+                  ) : (
+                    <img
+                      src={assets.add_icon_white}
+                      alt="add"
+                      className='h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full cursor-pointer p-1 hover:scale-110 transition-transform shadow-md'
+                      onClick={()=>{addToCart(element.id)}}
+                    />
+                  )}
                 </div>
-                :
-                <img
-                  src={assets.add_icon_white}
-                  alt="add"
-                  className='h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full cursor-pointer p-1 hover:scale-110 transition-transform shadow-md'
-                  onClick={()=>{addToCart(element._id)}}
-                />
-                }
-              </div>
-
-              <div className='p-3 sm:p-4'>
-                <div className='flex items-center justify-between'>
-                  <div className='flex items-center gap-2'>
-                    <p className='text-base sm:text-lg font-bold text-neutral-800 line-clamp-1'>{element.name}</p>
-                    <img src={assets.rating_starts} alt="rating" className='h-3 sm:h-4' />
+                
+                <div className='p-3 sm:p-4'>
+                  <div className='flex items-center justify-between'>
+                    <div className='flex items-center gap-2'>
+                      <p className='text-base sm:text-lg font-bold text-neutral-800 line-clamp-1'>{element.name}</p>
+                      <img src={assets.rating_starts} alt="rating" className='h-3 sm:h-4' />
+                    </div>
                   </div>
+                  <p className='mt-2 text-xs sm:text-sm text-neutral-600 line-clamp-2'>{element.description}</p>
+                  <p className='text-lg sm:text-xl font-bold mt-2 text-orange-500'>${element.price}</p>
                 </div>
-                <p className='mt-2 text-xs sm:text-sm text-neutral-600 line-clamp-2'>{element.description}</p>
-                <p className='text-lg sm:text-xl font-bold mt-2 text-orange-500'>${element.price}</p>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
+
+      {/* Login prompt for non-logged users */}
+      {!isLoggedIn && (
+        <div className='mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg text-center w-full max-w-7xl'>
+          <p className='text-blue-800'>Please log in to add items to your cart and place orders.</p>
+        </div>
+      )}
     </div>
     </>
   )

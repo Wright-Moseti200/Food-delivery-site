@@ -110,7 +110,7 @@ let getCartData =async (req,res)=>{
 let addToCart = async (req,res)=>{
     try{
      let userData = await Users.findOne({_id:req.user.id});
-     userData.cartData[req.params.id]=userData.cartData[req.params.id]+1;
+     userData.cartData[req.body.id]+=1;
      await Users.findOneAndUpdate({_id:req.user.id},{cartData:userData.cartData}); 
      res.status(200).json({
         success:true,
@@ -118,7 +118,7 @@ let addToCart = async (req,res)=>{
      });
     }
     catch(error){
-      return   res.status(500).json({
+      return  res.status(500).json({
             success:false,
     message:error.message,
 });
@@ -129,7 +129,7 @@ let addToCart = async (req,res)=>{
 let removeFromCart = async (req,res)=>{
 try{
       let userData = await Users.findOne({_id:req.user.id});
-     userData.cartData[req.params.id]=userData.cartData[req.params.id]-1;
+     userData.cartData[req.body.id]-=1;
      await Users.findOneAndUpdate({_id:req.user.id},{cartData:userData.cartData}); 
      res.status(200).json({
         success:true,

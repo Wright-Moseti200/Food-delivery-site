@@ -27,6 +27,7 @@ const Checkout = () => {
       console.log(result.error);
     }
   }
+  
   return (
     <div className='flex w-full justify-center items-start py-4 sm:py-8'>
       <div className='flex flex-col lg:flex-row mt-8 lg:mt-14 w-full max-w-7xl justify-center lg:justify-around gap-8 lg:gap-40 px-4 sm:px-6 lg:px-8'>

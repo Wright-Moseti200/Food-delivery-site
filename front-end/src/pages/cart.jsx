@@ -1,12 +1,29 @@
 /* eslint-disable no-unused-vars */
 import React,{useContext,useState,useEffect} from 'react'
 import {FoodContext} from "../context/context";
-import {food_list,assets} from "../assets/assets.js"
+import {assets} from "../assets/assets.js"
 import { Link } from 'react-router-dom';
 
 const Cart = () => {
-  let {getTotalCartAmount,cart,removeFromCart}=useContext(FoodContext);
+  let {cart, removeFromCart} = useContext(FoodContext);
+  let [foodList, setfoodlist] = useState([]);
+
+  let apiCall = async() => {
+      try{
+        let response = await fetch('http://localhost:3000/api/product/sendProductData');
+        let data = await response.json();
+        setfoodlist(data.products);
+      }
+      catch(error){
+        alert(error.message);
+      }
+    }
   
+    useEffect(() => {
+      apiCall();
+    },[foodList]);
+
+
   return (
     <div className='flex flex-col w-full justify-center items-center px-4 sm:px-6 lg:px-8'>
       
@@ -26,30 +43,30 @@ const Cart = () => {
         {/* Cart Items */}
         <div className='space-y-4 lg:space-y-2'>
           {
-            food_list.map((element,index)=>{
-              if(cart[element._id]>0){
+            foodList.map((element,index)=>{
+              if(cart && cart[element.id] > 0){
                 return (
-                  <div key={element._id || index} className='bg-white shadow-sm rounded-lg border border-gray-200 p-4'>
+                  <div key={index} className='bg-white shadow-sm rounded-lg border border-gray-200 p-4'>
                     
                     {/* Mobile Card Layout */}
                     <div className='flex lg:hidden items-center justify-between'>
                       <div className='flex items-center space-x-4 flex-1'>
                         <img 
                           className='h-12 w-12 sm:h-16 sm:w-16 rounded-sm object-cover' 
-                          src={element.image}
+                          src={element.image_url}
                           alt={element.name}
                         />
                         <div className='flex-1 min-w-0'>
                           <p className='font-medium text-gray-800 text-sm sm:text-base truncate'>{element.name}</p>
                           <p className='text-gray-600 text-sm'>${element.price}</p>
-                          <p className='text-gray-600 text-sm'>Qty: {cart[element._id]}</p>
+                          <p className='text-gray-600 text-sm'>Qty: {cart[element.id]}</p>
                         </div>
                       </div>
                       <div className='flex flex-col items-end space-y-2'>
-                        <p className='font-semibold text-gray-800 text-sm sm:text-base'>${element.price*cart[element._id]}</p>
+                        <p className='font-semibold text-gray-800 text-sm sm:text-base'>${element.price * cart[element.id]}</p>
                         <img 
                           className='h-5 w-5 cursor-pointer hover:opacity-70 transition-opacity' 
-                          onClick={()=>{removeFromCart(element._id)}} 
+                          onClick={()=>{removeFromCart(element.id)}} 
                           src={assets.cross_icon}
                           alt="Remove item"
                         />
@@ -60,16 +77,16 @@ const Cart = () => {
                     <div className='hidden lg:grid lg:grid-cols-6 gap-4 items-center'>
                       <img 
                         className='h-12 w-12 rounded-sm object-cover' 
-                        src={element.image}
+                        src={element.image_url}
                         alt={element.name}
                       />
                       <p className='font-medium text-gray-800'>{element.name}</p>
                       <p className='text-gray-600'>${element.price}</p>
-                      <p className='text-gray-600'>{cart[element._id]}</p>
-                      <p className='font-semibold text-gray-800'>${element.price*cart[element._id]}</p>
+                      <p className='text-gray-600'>{cart[element.id]}</p>
+                      <p className='font-semibold text-gray-800'>${element.price * cart[element.id]}</p>
                       <img 
                         className='h-6 w-6 cursor-pointer hover:opacity-70 transition-opacity justify-self-center' 
-                        onClick={()=>{removeFromCart(element._id)}} 
+                        onClick={()=>{removeFromCart(element.id)}} 
                         src={assets.cross_icon}
                         alt="Remove item"
                       />

@@ -5,8 +5,8 @@ let userRouter = express.Router();
 
 userRouter.post("/signUp",signUp);
 userRouter.post("/signIn",signIn);
-userRouter.post("/addtocart",authMiddleware,addToCart);
-userRouter.post("/removefromcart",authMiddleware,removeFromCart);
+userRouter.put("/addtocart",authMiddleware,addToCart);
+userRouter.put("/removefromcart",authMiddleware,removeFromCart);
 userRouter.get("/getcartdata",authMiddleware,getCartData);
 userRouter.post("/create-checkout-session",payment);
 
