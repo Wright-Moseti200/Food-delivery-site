@@ -2,7 +2,6 @@ let express = require("express");
 let app = express();
 require("dotenv").config;
 let cors = require("cors");
-const path = require("path");
 const { mongodb } = require("./database");
 const { userRouter } = require("./routes/userRoutes");
 const { productRouter } = require("./routes/productRoutes");
@@ -17,7 +16,6 @@ res.send("Express server is running")
 });
 
 app.use(express.json());
-app.use("/images",express.static(path.join(__dirname, "folder/images")));
 app.use("/api/users",userRouter);
 app.use("/api/product",productRouter);
 
