@@ -184,7 +184,7 @@ const Checkout = () => {
                 type='text'
                 name='city'
                 value={formData.city}
-                onChange={handleInputChange}  
+                onChange={handleInputChange}
                 placeholder='City*' 
                 className='border-[1px] border-neutral-300 rounded-sm p-2 sm:p-3 outline-none flex-1 focus:border-orange-500 text-sm sm:text-base'
                 required

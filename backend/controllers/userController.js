@@ -47,6 +47,7 @@ catch(error){
 return res.status(500).json({
     success:false,
     message:error.message
+
 })
 }
 }
@@ -188,7 +189,7 @@ let payment = async(req,res)=>{
         });
         
     } catch (error) {
-        console.error('Stripe payment error:', error);
+        console.error('Stripe payment error:', error)
         res.status(500).json({
             success: false,
             message: error.message
