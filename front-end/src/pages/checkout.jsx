@@ -13,12 +13,25 @@ const Checkout = () => {
   let stripe_key = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
   let {cart} = useContext(FoodContext);
   let [foodList, setFoodList] = useState([]);
+  let [user,setUser] = useState();
+
+  //get credentials
+  let getcredentials = async()=>{
+    let response = await fetch("http://localhost:3000/api/users/getcredentials",{
+      method:"get",
+      headers:{
+        "Content-type":"application/json",
+        "auth-token":localStorage.getItem("auth-token")
+      }
+  });
+    let data = await response.json();
+    setUser(data.email);
+  }
   
   // State for form data
   const [formData, setFormData] = useState({
     firstname: '',
     lastname: '',
-    email: '',
     street: '',
     city: '',
     state: '',
@@ -26,6 +39,7 @@ const Checkout = () => {
     country: '',
     phone: ''
   });
+
 
   // Fetch food data
   let apiCall = async() => {
@@ -40,6 +54,7 @@ const Checkout = () => {
   
   useEffect(() => {
     apiCall();
+    getcredentials();
   }, []);
 
   // Function to get the appropriate cart based on login status
@@ -71,6 +86,7 @@ const Checkout = () => {
     }));
   };
 
+
   const makePayment = async (e) => {
     if (e) e.preventDefault();
 
@@ -87,7 +103,8 @@ const Checkout = () => {
         cart: getCartToUse(),
         deliveryInfo: formData,
         totalAmount: getTotalCartAmount() + 5,
-        foodItems: foodList.filter(item => getCartToUse()[item.id] > 0)
+        foodItems: foodList.filter(item => getCartToUse()[item.id] > 0),
+        email:user
       };
 
       const response = await fetch(`http://localhost:3000/api/users/create-checkout-session`, {
@@ -155,17 +172,6 @@ const Checkout = () => {
                 required
               />
             </div>
-            
-            {/* Email */}
-            <input 
-              type='email' 
-              name="email" 
-              value={formData.email}
-              onChange={handleInputChange}
-              className='border-[1px] border-neutral-300 rounded-sm p-2 sm:p-3 outline-none focus:border-orange-500 text-sm sm:text-base'  
-              placeholder='Email address*'
-              required
-            />
             
             {/* Street */}
             <input 

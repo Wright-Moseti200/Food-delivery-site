@@ -1,3 +1,4 @@
+const { orderModel } = require("../models/ordermodel");
 const { Product } = require("../models/productModel");
 
 
@@ -80,4 +81,55 @@ let sendProductData = async (req,res)=>{
     }
 }
 
-module.exports={receiveProductData,sendProductData,uploadImage};
+let getusersorders = async(req,res)=>{
+    try{
+        let orders = await orderModel.find({});
+        if(!orders){
+            return res.status(404).json({
+                success:false,
+                message:"Orders not found"
+            });
+        }
+        return res.status(200).json({
+            success:true,
+            orders:orders
+        })
+    }
+    catch(error){
+        res.status(500).json({
+            success:false,
+            message:error.message
+        });
+    }
+}
+
+let updateorders = async(req,res)=>{
+    try{
+        if(!req.body.id||!req.body.status){
+            return res.status(404).json({
+                success:false,
+                message:"Please enter the orderId or status"
+            });
+        }
+        let orders = await orderModel.findOne({_id:req.body.id});
+        if(!orders){
+            return res.status(404).json({
+                success:false,
+                message:"Orders not found"
+            });
+        }
+        await orderModel.findOneAndUpdate({_id:req.body.id},{status:req.body.status});
+        return res.status(200).json({
+            success:true,
+            message:"successfully updated"
+        });
+    }
+    catch(error){
+        res.status(500).json({
+            success:false,
+            message:error.message
+        });
+    }
+}
+
+module.exports={receiveProductData,sendProductData,uploadImage,getusersorders,updateorders};

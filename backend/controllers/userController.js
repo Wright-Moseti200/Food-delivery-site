@@ -3,8 +3,9 @@ require("dotenv").config();
 let bcrypt = require("bcrypt");
 let jwt =  require("jsonwebtoken");
 let {Users} = require("../models/userModels");
+const { orderModel } = require("../models/ordermodel");
 let stripe = require("stripe")(process.env.STRIPE_SECRET);
-
+let details;
 //Signup
 let signUp = async (req,res)=>{
     try{
@@ -145,10 +146,9 @@ catch(error){
 }
 }
 
-//Payment integration
 let payment = async(req,res)=>{
     try {
-        const { cart, deliveryInfo, totalAmount, foodItems } = req.body;
+        const { cart, deliveryInfo, totalAmount, foodItems,email } = req.body;
         
         // Validate required data
         if (!cart || !foodItems || foodItems.length === 0) {
@@ -164,7 +164,7 @@ let payment = async(req,res)=>{
                 currency: "usd",
                 product_data: {
                     name: element.name,
-                    images: [element.image_url] // Match your frontend property name
+                    images: [element.image_url]
                 },
                 unit_amount: Math.round(element.price * 100) // Convert to cents
             },
@@ -175,14 +175,15 @@ let payment = async(req,res)=>{
             payment_method_types: ["card"],
             line_items: lineItems,
             mode: "payment",
-            success_url: "http://localhost:5173/success", // Your frontend success URL
-            cancel_url: "http://localhost:5173/cart",     // Your frontend cancel URL
-            customer_email: deliveryInfo.email, // Pre-fill email
+            success_url: "http://localhost:5173/orders",
+            cancel_url: "http://localhost:5173/cart",
+            customer_email: email,
             metadata: {
-                delivery_address: JSON.stringify(deliveryInfo)
+                delivery_address: JSON.stringify(deliveryInfo) // Convert to JSON string
             }
         });
-
+        
+        details=lineItems
         res.status(200).json({ 
             success: true,
             id: session.id 
@@ -197,4 +198,98 @@ let payment = async(req,res)=>{
     }
 }
 
-module.exports = {signUp,signIn,getCartData,addToCart,removeFromCart,payment};
+//Get credentials
+let credentials = async(req,res)=>{
+    try{
+        let user = await Users.findOne({_id:req.user.id});
+        if(!user){
+            return res.status(404).json({
+                success:true,
+                message:"User not found"
+            });
+        }
+        res.status(200).json({
+            success:true,
+            email:user.email
+        });
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+    message:error.message 
+    })
+}
+} 
+
+let webhook = async(req,res)=>{
+    try{
+        let event;
+        let sig = req.headers["stripe-signature"];
+        let endpointsecret = process.env.STRIPE_SIGNING_SECRET
+        event = await stripe.webhooks.constructEvent(req.body,sig,endpointsecret)
+        
+        if(event.type==="checkout.session.completed"){
+            // Parse the delivery_address from metadata
+            let deliveryInfo = JSON.parse(event.data.object.metadata.delivery_address);
+            
+            let orders = new orderModel({
+                email: event.data.object.customer_email,
+                products: details,
+                names: event.data.object.customer_details.name,
+                delivery_info:{
+                    firstname: deliveryInfo.firstname,
+                    lastname: deliveryInfo.lastname,
+                    street: deliveryInfo.street,
+                    city: deliveryInfo.city,
+                    state: deliveryInfo.state,
+                    zipcode: deliveryInfo.zipcode,
+                    country: deliveryInfo.country,
+                    phone: deliveryInfo.phone
+                },
+            });
+            await orders.save();
+            return res.status(200).json({
+                success:true,
+                message:"Payment confirmed"
+            });
+        }
+    }
+    catch(error){
+      res.status(500).json({
+            success: false,
+            message: error.message
+        });  
+    }
+}
+
+//getorders
+let getuserorders = async(req,res)=>{
+try{
+    let user = await Users.findOne({_id:req.user.id});
+    if(!user){
+        return res.status(404).json({
+            success:false,
+            message:"User not found"
+        });
+    }
+    let orders = await orderModel.find({email:user.email});
+    if(!orders){
+        return res.status(404).json({
+            success:true,
+            message:"Orders not found"
+        });
+    }
+    res.json({
+        success:true,
+        orders:orders
+    });
+}
+catch(error){
+    res.status(500).json({
+            success: false,
+            message: error.message
+        });   
+}
+}
+
+module.exports = {signUp,signIn,getCartData,addToCart,removeFromCart,payment,credentials,webhook,getCartData,getuserorders};
