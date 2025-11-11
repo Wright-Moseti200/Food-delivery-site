@@ -17,7 +17,7 @@ const Checkout = () => {
 
   //get credentials
   let getcredentials = async()=>{
-    let response = await fetch("http://localhost:3000/api/users/getcredentials",{
+    let response = await fetch("https://food-delivery-site-ljqp.onrender.com/api/users/getcredentials",{
       method:"get",
       headers:{
         "Content-type":"application/json",
@@ -44,7 +44,7 @@ const Checkout = () => {
   // Fetch food data
   let apiCall = async() => {
     try {
-      let response = await fetch('http://localhost:3000/api/product/sendProductData');
+      let response = await fetch('https://food-delivery-site-ljqp.onrender.com/api/product/sendProductData');
       let data = await response.json();
       setFoodList(data.products);
     } catch(error) {
@@ -107,7 +107,7 @@ const Checkout = () => {
         email:user
       };
 
-      const response = await fetch(`http://localhost:3000/api/users/create-checkout-session`, {
+      const response = await fetch(`https://food-delivery-site-ljqp.onrender.com/api/users/create-checkout-session`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

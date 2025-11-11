@@ -44,7 +44,7 @@ const Home = () => {
 
   let apiCall =async()=>{
     try{
-      let response = await fetch('http://localhost:3000/api/product/sendProductData');
+      let response = await fetch('https://food-delivery-site-ljqp.onrender.com/api/product/sendProductData');
       let data = await response.json();
       setData(data.products);
     }

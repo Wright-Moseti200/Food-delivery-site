@@ -44,7 +44,7 @@ const Navbar = () => {
     
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:3000/api/users/signUp", {
+      const response = await fetch("https://food-delivery-site-ljqp.onrender.com/api/users/signUp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -74,7 +74,7 @@ const Navbar = () => {
     
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:3000/api/users/signIn", {
+      const response = await fetch("https://food-delivery-site-ljqp.onrender.com/api/users/signIn", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
