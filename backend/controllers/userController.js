@@ -175,8 +175,8 @@ let payment = async(req,res)=>{
             payment_method_types: ["card"],
             line_items: lineItems,
             mode: "payment",
-            success_url: "https://food-delivery-site-frontend-qkes.onrender.com/orders",
-            cancel_url: "https://food-delivery-site-frontend-qkes.onrender.com/cart",
+            success_url: "https://mellifluous-stroopwafel-8ab97d.netlify.app/orders",
+            cancel_url: "https://mellifluous-stroopwafel-8ab97d.netlify.app/cart",
             customer_email: email,
             metadata: {
                 delivery_address: JSON.stringify(deliveryInfo) // Convert to JSON string
