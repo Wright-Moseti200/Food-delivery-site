@@ -175,8 +175,8 @@ let payment = async(req,res)=>{
             payment_method_types: ["card"],
             line_items: lineItems,
             mode: "payment",
-            success_url: "http://localhost:5173/orders",
-            cancel_url: "http://localhost:5173/cart",
+            success_url: "https://food-delivery-site-frontend-qkes.onrender.com/orders",
+            cancel_url: "https://food-delivery-site-frontend-qkes.onrender.com/cart",
             customer_email: email,
             metadata: {
                 delivery_address: JSON.stringify(deliveryInfo) // Convert to JSON string
