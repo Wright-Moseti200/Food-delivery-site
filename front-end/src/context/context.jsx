@@ -17,7 +17,7 @@ const Context = ({children}) => {
 
     let getcartData = async ()=>{
          const token = localStorage.getItem("auth-token");
-       await fetch('http://localhost:3000/api/users/getcartdata',{
+       await fetch('https://food-delivery-site-ljqp.onrender.com/api/users/getcartdata',{
         method:"get",
         headers:{
             "Content-Type":"application/json",
@@ -32,7 +32,7 @@ const Context = ({children}) => {
     },[cart]);
 
     let addToCart= async(elementId)=>{
-         await fetch('http://localhost:3000/api/users/addtocart',{
+         await fetch('https://food-delivery-site-ljqp.onrender.com/api/users/addtocart',{
             method:"put",
             headers:{
                 "Content-Type":"application/json",
@@ -45,7 +45,7 @@ const Context = ({children}) => {
     }
 
     let removeFromCart = async(elementId)=>{
-         await fetch('http://localhost:3000/api/users/removefromcart',{
+         await fetch('https://food-delivery-site-ljqp.onrender.com/api/users/removefromcart',{
             method:"put",
             headers:{
                 "Content-Type":"application/json",
