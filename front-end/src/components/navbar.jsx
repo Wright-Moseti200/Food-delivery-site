@@ -135,7 +135,7 @@ const Navbar = () => {
       <div className='w-full flex h-20 justify-center items-center'>
         <div className='flex flex-row w-screen items-center justify-around lg:justify-around'>
           <Link to="/">
-            <img className='h-10 cursor-pointer' src={assets.logo} alt="logo"/>
+            <h1 className='text-3xl text-orange-500 font-bold'>Pineapple</h1>
           </Link>
           
           {/* Desktop Navigation - Hidden on mobile */}
