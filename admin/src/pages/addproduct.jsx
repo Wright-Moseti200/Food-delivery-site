@@ -19,13 +19,13 @@ const AddProduct = () => {
     let responseData;
     let formData1 = new FormData();
     formData1.append("product",image);
-    await fetch("http://localhost:3000/api/product/upload",{
+    await fetch("https://food-delivery-site-ljqp.onrender.com/api/product/upload",{
       method:"post",
       body:formData1
     }).then((response)=>response.json()).then((data)=>responseData=data).catch((error)=>console.log(error.message));
     if(responseData.success){
       formData.image_url=responseData.image_url;
-       await fetch("http://localhost:3000/api/product/receiveProductData",{
+       await fetch("https://food-delivery-site-ljqp.onrender.com/api/product/receiveProductData",{
         method:"post",
         headers:{
           "Content-type":"application/json"

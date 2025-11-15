@@ -7,7 +7,7 @@ const Orders = () => {
   const fetchAllOrders = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/product/getusersorders");
+      const response = await fetch("https://food-delivery-site-ljqp.onrender.com/api/product/getusersorders");
       
       if (response.ok) {
         const data = await response.json();
@@ -26,7 +26,7 @@ const Orders = () => {
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      const response = await fetch("http://localhost:3000/api/product/updateorderstatus", {
+      const response = await fetch("https://food-delivery-site-ljqp.onrender.com/api/product/updateorderstatus", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
