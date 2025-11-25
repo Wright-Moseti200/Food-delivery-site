@@ -1,188 +1,364 @@
-🍔 Food Delivery Site
+# 🍔 Food Delivery Site
 
-A robust full-stack web application designed for food ordering and delivery management. This project features a customer-facing frontend for browsing and ordering food, a dedicated admin panel for restaurant management, and a powerful backend API.
+<div align="center">
 
-📂 Project Structure
+**A robust full-stack web application for seamless food ordering and delivery management**
 
-The repository is organized into three main directories:
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-v14+-green.svg)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-18+-blue.svg)](https://reactjs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4.4+-green.svg)](https://www.mongodb.com/)
 
-backend/: The server-side application (Node.js/Express) that handles API requests, database connections, and business logic.
+[Features](#-key-features) • [Tech Stack](#-tech-stack) • [Getting Started](#-getting-started) • [API Endpoints](#-api-endpoints) • [Contributing](#-contributing)
 
-front-end/: The client-side application (React.js) where users can browse menus, add items to the cart, and place orders.
+</div>
 
-admin/: A specialized dashboard (React.js) for administrators to manage food items, view orders, and update order statuses.
+---
 
-✨ Key Features
+## 🌟 About
 
-👤 User Application (Front-end)
+Food Delivery Site is a complete solution for online food ordering and restaurant management. The platform features a customer-facing application for browsing menus and placing orders, a powerful admin dashboard for restaurant management, and a robust backend API that ties everything together.
 
-Authentication: User login and registration functionality.
+## 📂 Project Structure
 
-Food Browsing: View food categories and detailed item descriptions.
+```
+Food-Delivery-Site/
+│
+├── backend/                # Server-side application (Node.js/Express)
+│   ├── models/            # Database Schemas (User, Food, Order)
+│   ├── routes/            # API Routes
+│   ├── controllers/       # Request handlers
+│   ├── middleware/        # Auth & validation
+│   ├── config/            # Database & environment config
+│   └── server.js          # Entry point
+│
+├── front-end/             # Customer-facing application (React.js)
+│   ├── public/           # Static assets
+│   ├── src/
+│   │   ├── components/   # UI components (Navbar, FoodCard, Cart)
+│   │   ├── pages/        # Pages (Home, Menu, Checkout, Orders)
+│   │   ├── context/      # State management (Context API/Redux)
+│   │   └── App.js        # Main component
+│   └── package.json      # Frontend dependencies
+│
+├── admin/                 # Admin dashboard (React.js)
+│   ├── src/
+│   │   ├── components/   # Admin UI components
+│   │   ├── pages/        # Admin pages (Products, Orders, Users)
+│   │   └── App.js        # Admin main component
+│   └── package.json      # Admin dependencies
+│
+└── README.md             # Documentation
+```
 
-Cart Management: Add/remove items and adjust quantities.
+## ✨ Key Features
 
-Order Placement: Secure checkout process.
+### 👤 User Application (Front-end)
 
-Order History: View past orders and current status.
+<table>
+<tr>
+<td>
 
-🛡️ Admin Dashboard (Admin)
+**🔐 Authentication**
+- User registration
+- Secure login system
+- Session management
 
-Product Management: Add, edit, or delete food items and categories.
+</td>
+<td>
 
-Order Management: View incoming orders and update their status (e.g., Preparing, Out for Delivery, Delivered).
+**🍕 Food Browsing**
+- Browse food categories
+- Detailed item descriptions
+- High-quality food imagery
 
-User Overview: View registered users (optional).
+</td>
+</tr>
+<tr>
+<td>
 
-🔙 Backend (API)
+**🛒 Cart Management**
+- Add/remove items
+- Adjust quantities
+- Real-time price calculations
 
-RESTful API: Structured endpoints for users, products, and orders.
+</td>
+<td>
 
-Database: MongoDB integration for data persistence.
+**💳 Order Placement**
+- Secure checkout process
+- Multiple payment options
+- Order confirmation
 
-Image Storage: Handling of food image uploads (e.g., via Multer or Cloud storage).
+</td>
+</tr>
+<tr>
+<td colspan="2">
 
-🛠️ Tech Stack
+**📜 Order History**
+- View past orders
+- Track current order status
+- Reorder functionality
 
-Frontend: React.js, CSS/SCSS/Tailwind (Context API/Redux for state management).
+</td>
+</tr>
+</table>
 
-Backend: Node.js, Express.js.
+### 🛡️ Admin Dashboard
 
-Database: MongoDB (Mongoose ODM).
+<table>
+<tr>
+<td>
 
-Tools: Git, npm/yarn.
+**📦 Product Management**
+- Add new food items
+- Edit existing products
+- Delete items
+- Manage categories
 
-🚀 Getting Started
+</td>
+<td>
+
+**📋 Order Management**
+- View incoming orders
+- Update order status
+- Order filtering and search
+- Status tracking (Preparing, Out for Delivery, Delivered)
+
+</td>
+</tr>
+<tr>
+<td colspan="2">
+
+**👥 User Overview**
+- View registered users
+- User activity tracking
+- Customer insights
+
+</td>
+</tr>
+</table>
+
+### 🔙 Backend (API)
+
+- **RESTful API Architecture**: Clean, structured endpoints
+- **MongoDB Integration**: Robust data persistence with Mongoose ODM
+- **Image Storage**: Efficient handling of food image uploads (Multer/Cloud storage)
+- **Authentication & Authorization**: JWT-based security
+- **Payment Integration**: Stripe/Payment gateway support
+- **Error Handling**: Comprehensive error management
+
+## 🛠️ Tech Stack
+
+<div align="center">
+
+| Component | Technology |
+|-----------|-----------|
+| **Frontend** | React.js, CSS/SCSS/Tailwind CSS |
+| **State Management** | Context API / Redux |
+| **Backend** | Node.js, Express.js |
+| **Database** | MongoDB (Mongoose ODM) |
+| **Authentication** | JWT (JSON Web Tokens) |
+| **File Upload** | Multer / Cloud Storage |
+| **Payment** | Stripe API |
+| **Tools** | Git, npm/yarn |
+
+</div>
+
+## 🚀 Getting Started
 
 Follow these instructions to get the project up and running on your local machine.
 
-Prerequisites
+### Prerequisites
 
-Node.js (v14 or higher)
+Before you begin, ensure you have the following installed:
+- [Node.js](https://nodejs.org/) (v14 or higher)
+- [MongoDB](https://www.mongodb.com/) (Local installation or Atlas account)
+- [Git](https://git-scm.com/)
+- npm or yarn package manager
 
-MongoDB (Local or Atlas URL)
+### Installation
 
-1. Backend Setup
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Wright-Moseti200/Food-Delivery-Site.git
+   cd Food-Delivery-Site
+   ```
 
-Navigate to the backend folder and install dependencies:
+### 1. Backend Setup
 
-cd backend
-npm install
+2. **Navigate to the backend folder and install dependencies**
+   ```bash
+   cd backend
+   npm install
+   ```
 
+3. **Environment Configuration**
+   
+   Create a `.env` file in the `backend/` directory:
+   ```env
+   PORT=4000
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret_key
+   NODE_ENV=development
+   
+   # If using Stripe/Payment Gateway
+   STRIPE_SECRET_KEY=your_stripe_key
+   
+   # Cloud Storage (Optional)
+   CLOUDINARY_CLOUD_NAME=your_cloudinary_name
+   CLOUDINARY_API_KEY=your_api_key
+   CLOUDINARY_API_SECRET=your_api_secret
+   ```
 
-Configuration:
-Create a .env file in the backend directory and add the following (adjust as needed):
+4. **Run the backend server**
+   ```bash
+   npm start
+   # OR for development with auto-restart
+   npm run dev
+   ```
+   
+   The backend should now be running on `http://localhost:4000`
 
-PORT=4000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
-# If using Stripe/Payment
-STRIPE_SECRET_KEY=your_stripe_key
+### 2. Admin Panel Setup
 
+5. **Open a new terminal, navigate to the admin folder**
+   ```bash
+   cd admin
+   npm install
+   ```
 
-Run the server:
+6. **Run the admin dashboard**
+   ```bash
+   npm start
+   # OR for Vite-based setup
+   npm run dev
+   ```
+   
+   The admin panel typically runs on:
+   - `http://localhost:5173` (Vite)
+   - `http://localhost:3000` (Create React App)
 
-npm start
-# OR for development
-npm run dev
+### 3. Frontend (User App) Setup
 
+7. **Open a third terminal, navigate to the front-end folder**
+   ```bash
+   cd front-end
+   npm install
+   ```
 
-The backend should now be running on http://localhost:4000.
+8. **Run the frontend application**
+   ```bash
+   npm start
+   # OR for Vite-based setup
+   npm run dev
+   ```
+   
+   The user app typically runs on:
+   - `http://localhost:3000` (Create React App)
+   - `http://localhost:5174` (Vite)
 
-2. Admin Panel Setup
+## 📡 API Endpoints
 
-Open a new terminal, navigate to the admin folder, and install dependencies:
+### Food Items
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| `GET` | `/api/food/list` | Get all food items | No |
+| `POST` | `/api/food/add` | Add a new food item | Admin |
+| `PUT` | `/api/food/update/:id` | Update food item | Admin |
+| `DELETE` | `/api/food/delete/:id` | Delete food item | Admin |
 
-cd admin
-npm install
+### User Authentication
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| `POST` | `/api/user/register` | User registration | No |
+| `POST` | `/api/user/login` | User login | No |
+| `GET` | `/api/user/profile` | Get user profile | Yes |
 
+### Orders
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| `POST` | `/api/order/place` | Place a new order | Yes |
+| `GET` | `/api/order/userOrders` | Get user-specific orders | Yes |
+| `GET` | `/api/order/list` | Get all orders (Admin) | Admin |
+| `PUT` | `/api/order/status` | Update order status | Admin |
 
-Run the admin dashboard:
+### Cart
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| `POST` | `/api/cart/add` | Add item to cart | Yes |
+| `DELETE` | `/api/cart/remove` | Remove item from cart | Yes |
+| `GET` | `/api/cart/get` | Get user cart | Yes |
 
-npm start
-# OR
-npm run dev
+## 🗺️ Roadmap
 
+- [ ] Real-time order tracking with WebSockets
+- [ ] Restaurant ratings and reviews
+- [ ] Delivery driver application
+- [ ] Push notifications for order updates
+- [ ] Advanced search and filtering
+- [ ] Loyalty points and rewards system
+- [ ] Mobile application (React Native)
+- [ ] Multi-restaurant support
 
-The admin panel usually runs on http://localhost:5173 or http://localhost:3000 (depending on Vite/CRA).
+## 🤝 Contributing
 
-3. Frontend (User App) Setup
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-Open a third terminal, navigate to the front-end folder, and install dependencies:
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-cd front-end
-npm install
+### Contribution Guidelines
 
+- Write clear, descriptive commit messages
+- Follow the existing code style and structure
+- Test your changes thoroughly
+- Update documentation as needed
+- Add comments for complex logic
 
-Run the frontend application:
+## 🐛 Bug Reports
 
-npm start
-# OR
-npm run dev
+If you discover a bug, please create an issue with:
+- Clear description of the problem
+- Steps to reproduce
+- Expected vs actual behavior
+- System information (OS, Node version, etc.)
 
+## 📝 License
 
-The user app usually runs on http://localhost:3000 or http://localhost:5174.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-📡 API Endpoints (Examples)
+## 👨‍💻 Author
 
-Method
+**Wright Moseti**
 
-Endpoint
+- GitHub: [@Wright-Moseti200](https://github.com/Wright-Moseti200)
+- Project Link: [Food Delivery Site](https://github.com/Wright-Moseti200/Food-Delivery-Site)
 
-Description
+## 🙏 Acknowledgments
 
-GET
+- [React Documentation](https://reactjs.org/)
+- [Express.js](https://expressjs.com/)
+- [MongoDB Documentation](https://docs.mongodb.com/)
+- [Stripe API Documentation](https://stripe.com/docs/api)
+- [Multer](https://github.com/expressjs/multer)
 
-/api/food/list
+## 💡 Support
 
-Get all food items
+If you encounter any issues or have questions:
+- Open an issue on GitHub
+- Check existing documentation
+- Review closed issues for solutions
 
-POST
+---
 
-/api/food/add
+<div align="center">
 
-Add a new food item (Admin)
+**⭐ Star this repo if you find it helpful!**
 
-POST
+Made with ❤️ by Wright Moseti
 
-/api/user/login
-
-User login
-
-POST
-
-/api/user/register
-
-User registration
-
-POST
-
-/api/order/place
-
-Place a new order
-
-GET
-
-/api/order/userOrders
-
-Get user specific orders
-
-🤝 Contributing
-
-Contributions are welcome!
-
-Fork the project.
-
-Create your feature branch (git checkout -b feature/AmazingFeature).
-
-Commit your changes (git commit -m 'Add some AmazingFeature').
-
-Push to the branch (git push origin feature/AmazingFeature).
-
-Open a Pull Request.
-
-📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-Developed by Wright-Moseti200
+</div>
