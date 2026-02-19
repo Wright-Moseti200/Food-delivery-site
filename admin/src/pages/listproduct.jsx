@@ -5,7 +5,7 @@ const ListProduct = () => {
 
   let apiCall =async()=>{
     try{
-      let response = await fetch("https://food-delivery-site-ljqp.onrender.com/api/product/sendProductData");
+      let response = await fetch("https://food-delivery-site-22lt.vercel.app/api/product/sendProductData");
       let data = await response.json();
       setproducts(data.products);
     }
