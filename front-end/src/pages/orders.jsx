@@ -15,7 +15,7 @@ const Orders = () => {
         return;
       }
 
-      const response = await fetch('https://food-delivery-site-ljqp.onrender.com/api/users/getuserorders', {
+      const response = await fetch('https://food-delivery-site-22lt.vercel.app/api/users/getuserorders', {
         method: 'GET',
         headers: {
           'auth-token': localStorage.getItem("auth-token"),
