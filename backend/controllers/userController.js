@@ -5,7 +5,7 @@ let jwt =  require("jsonwebtoken");
 let {Users} = require("../models/userModels");
 const { orderModel } = require("../models/ordermodel");
 let stripe = require("stripe")(process.env.STRIPE_SECRET);
-let details;
+
 //Signup
 let signUp = async (req,res)=>{
     try{
